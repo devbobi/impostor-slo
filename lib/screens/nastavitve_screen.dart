@@ -124,7 +124,7 @@ class _Vsebina extends ConsumerWidget {
               Card(
                 child: SwitchListTile(
                   value: nastavitve.uporabiTimer,
-                  activeColor: AppTheme.akcent,
+                  activeThumbColor: AppTheme.akcent,
                   title: const Text('Časovnik za namigovanje'),
                   subtitle: Text(
                     nastavitve.uporabiTimer
@@ -150,7 +150,7 @@ class _Vsebina extends ConsumerWidget {
               Card(
                 child: SwitchListTile(
                   value: nastavitve.impostorViDiNamig,
-                  activeColor: AppTheme.akcent,
+                  activeThumbColor: AppTheme.akcent,
                   title: const Text('Impostor vidi kategorijo'),
                   subtitle: const Text(
                     'Lažje blefira (priporočeno za začetnike)',

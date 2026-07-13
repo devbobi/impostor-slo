@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/besede_repository.dart';
-import '../models/igralec.dart';
 import '../state/igra_controller.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ozadje.dart';
