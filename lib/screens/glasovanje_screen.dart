@@ -83,7 +83,10 @@ class _GlasovanjeScreenState extends ConsumerState<GlasovanjeScreen> {
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
-                                  'Igralec ${igralec.stevilka}',
+                                  igralec.prikazniIme,
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w700,
                                     color: izbran

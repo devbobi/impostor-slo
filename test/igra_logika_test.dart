@@ -35,6 +35,18 @@ void main() {
       expect(igralci.map((i) => i.stevilka).toList(), [1, 2, 3, 4]);
     });
 
+    test('vnesena imena se dodelijo, prazna pa uporabijo privzeto', () {
+      final igralci = IgraLogika.ustvariIgralce(
+        steviloIgralcev: 3,
+        steviloImpostorjev: 1,
+        imena: const ['Ana', '', 'Bojan'],
+        random: Random(7),
+      );
+      expect(igralci[0].prikazniIme, 'Ana');
+      expect(igralci[1].prikazniIme, 'Igralec 2');
+      expect(igralci[2].prikazniIme, 'Bojan');
+    });
+
     test('z istim seedom je razporeditev deterministična', () {
       List<Vloga> vloge(int seed) => IgraLogika.ustvariIgralce(
             steviloIgralcev: 6,

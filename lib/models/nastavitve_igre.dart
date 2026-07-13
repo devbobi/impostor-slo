@@ -7,6 +7,7 @@ class NastavitveIgre {
     this.casNamigovanjaSekunde = 120,
     this.uporabiTimer = true,
     this.impostorViDiNamig = false,
+    this.imena = const [],
   });
 
   final int steviloIgralcev;
@@ -21,6 +22,17 @@ class NastavitveIgre {
   /// Če je `true`, impostor poleg vloge dobi tudi ime kategorije (lažje blefira).
   final bool impostorViDiNamig;
 
+  /// Neobvezna imena igralcev (po indeksu 0..steviloIgralcev-1).
+  /// Prazen niz ali manjkajoč vnos pomeni privzeto "Igralec N".
+  final List<String> imena;
+
+  /// Ime za igralca z indeksom [i] (0-osnovan) ali `null`, če ni vneseno.
+  String? imeZa(int i) {
+    if (i < 0 || i >= imena.length) return null;
+    final t = imena[i].trim();
+    return t.isEmpty ? null : t;
+  }
+
   NastavitveIgre kopija({
     int? steviloIgralcev,
     int? steviloImpostorjev,
@@ -29,6 +41,7 @@ class NastavitveIgre {
     int? casNamigovanjaSekunde,
     bool? uporabiTimer,
     bool? impostorViDiNamig,
+    List<String>? imena,
   }) {
     return NastavitveIgre(
       steviloIgralcev: steviloIgralcev ?? this.steviloIgralcev,
@@ -39,6 +52,7 @@ class NastavitveIgre {
           casNamigovanjaSekunde ?? this.casNamigovanjaSekunde,
       uporabiTimer: uporabiTimer ?? this.uporabiTimer,
       impostorViDiNamig: impostorViDiNamig ?? this.impostorViDiNamig,
+      imena: imena ?? this.imena,
     );
   }
 

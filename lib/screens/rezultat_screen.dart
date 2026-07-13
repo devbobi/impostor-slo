@@ -51,8 +51,8 @@ class RezultatScreen extends ConsumerWidget {
                         if (izlocen != null)
                           _Vrstica(
                             oznaka: 'Izločen',
-                            vrednost: 'Igralec ${izlocen.stevilka}'
-                                '${izlocen.jeImpostor ? ' (impostor)' : ' (nedolžen)'}',
+                            vrednost:
+                                '${izlocen.prikazniIme}${izlocen.jeImpostor ? ' (impostor)' : ' (nedolžen)'}',
                             barva: izlocen.jeImpostor
                                 ? AppTheme.uspeh
                                 : AppTheme.nevarnost,
@@ -62,9 +62,8 @@ class RezultatScreen extends ConsumerWidget {
                           oznaka: impostorji.length > 1
                               ? 'Impostorji'
                               : 'Impostor',
-                          vrednost: impostorji
-                              .map((i) => 'Igralec ${i.stevilka}')
-                              .join(', '),
+                          vrednost:
+                              impostorji.map((i) => i.prikazniIme).join(', '),
                           barva: AppTheme.nevarnost,
                         ),
                         const SizedBox(height: 12),

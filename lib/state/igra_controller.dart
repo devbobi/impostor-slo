@@ -102,6 +102,7 @@ class IgraController extends StateNotifier<IgraStanje> {
     final igralci = IgraLogika.ustvariIgralce(
       steviloIgralcev: nastavitve.steviloIgralcev,
       steviloImpostorjev: nastavitve.steviloImpostorjev,
+      imena: nastavitve.imena,
       random: _random,
     );
 

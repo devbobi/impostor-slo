@@ -12,6 +12,7 @@ class IgraLogika {
   static List<Igralec> ustvariIgralce({
     required int steviloIgralcev,
     required int steviloImpostorjev,
+    List<String>? imena,
     Random? random,
   }) {
     assert(steviloIgralcev >= 3, 'Potrebni so vsaj 3 igralci.');
@@ -29,9 +30,13 @@ class IgraLogika {
     final impostorIndeksi = vsiIndeksi.take(steviloImpostorjev).toSet();
 
     return List<Igralec>.generate(steviloIgralcev, (i) {
+      final vneseno = (imena != null && i < imena.length)
+          ? imena[i].trim()
+          : '';
       return Igralec(
         stevilka: i + 1,
         vloga: impostorIndeksi.contains(i) ? Vloga.impostor : Vloga.navadni,
+        ime: vneseno.isEmpty ? null : vneseno,
       );
     });
   }
