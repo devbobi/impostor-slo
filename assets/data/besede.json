@@ -1,0 +1,68 @@
+{
+  "razlicica": 1,
+  "jezik": "sl",
+  "kategorije": [
+    {
+      "id": "hrana",
+      "ime": "Hrana",
+      "emoji": "🍽️",
+      "besede": [
+        "Pica", "Burek", "Potica", "Žlikrofi", "Golaž", "Ričet", "Jota",
+        "Štruklji", "Kranjska klobasa", "Ajdovi žganci", "Prekmurska gibanica",
+        "Palačinke", "Krof", "Sladoled", "Čokolada", "Testenine", "Rižota",
+        "Solata", "Juha", "Zrezek", "Hamburger", "Sendvič", "Ocvrti sir",
+        "Pomfri", "Kruh", "Med", "Marmelada", "Jabolčni zavitek"
+      ]
+    },
+    {
+      "id": "poklici",
+      "ime": "Poklici",
+      "emoji": "👷",
+      "besede": [
+        "Zdravnik", "Učitelj", "Policist", "Gasilec", "Pilot", "Kuhar",
+        "Natakar", "Vojak", "Odvetnik", "Sodnik", "Frizer", "Mehanik",
+        "Elektrikar", "Vodovodar", "Kmet", "Ribič", "Zidar", "Slikar",
+        "Glasbenik", "Igralec", "Pisatelj", "Novinar", "Programer", "Inženir",
+        "Arhitekt", "Znanstvenik", "Pilot dirkač", "Vrtnar", "Pek", "Mesar"
+      ]
+    },
+    {
+      "id": "filmi_serije",
+      "ime": "Filmi in serije",
+      "emoji": "🎬",
+      "besede": [
+        "Kekec", "Gospodar prstanov", "Vojna zvezd", "Titanik", "Levji kralj",
+        "Harry Potter", "Batman", "Spiderman", "Frozen", "Avatar",
+        "Igra prestolov", "Prijatelji", "Stranger Things", "Črnobil",
+        "Kramp in mizica", "Naša mala klinika", "Jamski gasilec", "Matrica",
+        "Vojna svetov", "Pošast v Parizu", "Auti", "Iskanje Nema",
+        "Kralj Julien", "Peppa Pig", "Kung Fu Panda", "Shrek", "Terminator",
+        "Rambo", "Rocky", "Joker"
+      ]
+    },
+    {
+      "id": "zivali",
+      "ime": "Živali",
+      "emoji": "🐾",
+      "besede": [
+        "Pes", "Mačka", "Konj", "Krava", "Prašič", "Ovca", "Koza", "Kokoš",
+        "Race", "Zajec", "Lisica", "Volk", "Medved", "Jelen", "Srna", "Veverica",
+        "Jež", "Kača", "Žaba", "Riba", "Delfin", "Kit", "Morski pes", "Slon",
+        "Lev", "Tiger", "Žirafa", "Opica", "Pingvin", "Orel", "Sova", "Čebela"
+      ]
+    },
+    {
+      "id": "kraji_slo",
+      "ime": "Kraji v Sloveniji",
+      "emoji": "🏔️",
+      "besede": [
+        "Ljubljana", "Maribor", "Celje", "Kranj", "Koper", "Novo mesto",
+        "Ptuj", "Velenje", "Nova Gorica", "Murska Sobota", "Bled", "Bohinj",
+        "Piran", "Portorož", "Postojna", "Kranjska Gora", "Bovec", "Škofja Loka",
+        "Idrija", "Kamnik", "Ribnica", "Cerknica", "Rogaška Slatina", "Izola",
+        "Triglav", "Blejsko jezero", "Postojnska jama", "Škocjanske jame",
+        "Logarska dolina", "Vintgar"
+      ]
+    }
+  ]
+}

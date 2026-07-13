@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  analiza_in_testi:
+    name: Analiza in testi
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prevzem kode
+        uses: actions/checkout@v4
+
+      - name: Namestitev Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Namestitev odvisnosti
+        run: flutter pub get
+
+      - name: Preverjanje formatiranja
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Statična analiza
+        run: flutter analyze
+
+      - name: Testi
+        run: flutter test
