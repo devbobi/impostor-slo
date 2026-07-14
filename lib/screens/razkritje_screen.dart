@@ -1,13 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/igralec.dart';
 import '../state/igra_controller.dart';
 import '../theme/app_theme.dart';
-import '../widgets/ozadje.dart';
 
 /// Višina območja karte v pikslih (za izračun poteka poteg -> pokuk).
 const double _kartaVisina = 380;
+
+/// Koliko časa je gumb "naprej" zaklenjen po kliku (prepreči dvojni klik
+/// oz. nehoten preskok igralca).
+const Duration _zaklepNaprej = Duration(milliseconds: 750);
 
 class RazkritjeScreen extends ConsumerStatefulWidget {
   const RazkritjeScreen({super.key});
@@ -20,12 +26,16 @@ class _RazkritjeScreenState extends ConsumerState<RazkritjeScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _snap;
   Animation<double>? _snapAnim;
+  Timer? _zaklepTimer;
 
   /// 0.0 = popolnoma zakrito, 1.0 = popolnoma razkrito.
   double _pokuk = 0;
 
   /// Ali je igralec vsaj enkrat pokukal (za namig na gumbu).
   bool _videl = false;
+
+  /// Gumb "naprej" je začasno zaklenjen (proti dvojnemu kliku).
+  bool _zaklenjen = false;
 
   @override
   void initState() {
@@ -42,6 +52,7 @@ class _RazkritjeScreenState extends ConsumerState<RazkritjeScreen>
 
   @override
   void dispose() {
+    _zaklepTimer?.cancel();
     _snap.dispose();
     super.dispose();
   }
@@ -55,7 +66,6 @@ class _RazkritjeScreenState extends ConsumerState<RazkritjeScreen>
   }
 
   void _spusti() {
-    // Vrni karto v zakrito stanje.
     _snapAnim = Tween<double>(begin: _pokuk, end: 0).animate(
       CurvedAnimation(parent: _snap, curve: Curves.easeOut),
     );
@@ -63,11 +73,19 @@ class _RazkritjeScreenState extends ConsumerState<RazkritjeScreen>
   }
 
   void _naprej() {
+    if (_zaklenjen) return;
+    // Močan haptični pulz kot jasen signal, da se je zamenjal igralec.
+    HapticFeedback.mediumImpact();
     setState(() {
       _pokuk = 0;
       _videl = false;
+      _zaklenjen = true;
     });
     ref.read(igraControllerProvider.notifier).naslednjeRazkritje();
+    _zaklepTimer?.cancel();
+    _zaklepTimer = Timer(_zaklepNaprej, () {
+      if (mounted) setState(() => _zaklenjen = false);
+    });
   }
 
   @override
@@ -82,38 +100,62 @@ class _RazkritjeScreenState extends ConsumerState<RazkritjeScreen>
     final igralec = stanje.igralci[index];
     final skupaj = stanje.igralci.length;
     final zadnji = index + 1 >= skupaj;
+    final barva = AppTheme.barvaIgralca(index);
 
     return Scaffold(
-      body: Ozadje(
+      // Ozadje se animirano obarva v barvo trenutnega igralca -> ob prehodu
+      // je takoj vidno, da je na vrsti nekdo drug.
+      body: AnimatedContainer(
+        duration: const Duration(milliseconds: 450),
+        curve: Curves.easeOut,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.lerp(AppTheme.ozadje, barva, 0.30)!,
+              AppTheme.ozadje,
+              Color.lerp(AppTheme.ozadje, barva, 0.16)!,
+            ],
+          ),
+        ),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
               children: [
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
+                // Napredek: pika za vsakega igralca, trenutni poudarjen.
+                _Napredek(skupaj: skupaj, trenutni: index, barva: barva),
+                const SizedBox(height: 14),
                 const Text(
                   'Na vrsti je',
                   style: TextStyle(color: AppTheme.besediloTiho),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  igralec.prikazniIme,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        color: AppTheme.besedilo,
-                      ),
-                ),
-                Text(
-                  '${index + 1} / $skupaj',
-                  style: const TextStyle(
-                    color: AppTheme.besediloTiho,
-                    fontSize: 13,
+                const SizedBox(height: 6),
+                // Ime v barvi igralca — velik, jasen indikator menjave.
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder: (child, anim) => FadeTransition(
+                    opacity: anim,
+                    child: ScaleTransition(scale: anim, child: child),
+                  ),
+                  child: Text(
+                    igralec.prikazniIme,
+                    key: ValueKey(index),
+                    textAlign: TextAlign.center,
+                    style:
+                        Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              color: barva,
+                            ),
                   ),
                 ),
                 const Spacer(),
                 _PokukKarta(
                   pokuk: _pokuk,
+                  barva: barva,
+                  index: index,
                   igralec: igralec,
                   beseda: stanje.skrivnaBeseda ?? '',
                   kategorijaIme: stanje.kategorija?.ime ?? '',
@@ -134,7 +176,12 @@ class _RazkritjeScreenState extends ConsumerState<RazkritjeScreen>
                 ),
                 const Spacer(),
                 ElevatedButton(
-                  onPressed: _naprej,
+                  onPressed: _zaklenjen ? null : _naprej,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: barva,
+                    disabledBackgroundColor: AppTheme.povrsinaSvetla,
+                    foregroundColor: Colors.white,
+                  ),
                   child: Text(
                     zadnji ? 'ZAČNI NAMIGOVANJE' : 'PODAJ NASLEDNJEMU',
                   ),
@@ -149,11 +196,50 @@ class _RazkritjeScreenState extends ConsumerState<RazkritjeScreen>
   }
 }
 
+/// Vrstica pik, ki kaže napredek skozi igralce.
+class _Napredek extends StatelessWidget {
+  const _Napredek({
+    required this.skupaj,
+    required this.trenutni,
+    required this.barva,
+  });
+
+  final int skupaj;
+  final int trenutni;
+  final Color barva;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (var i = 0; i < skupaj; i++)
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            margin: const EdgeInsets.symmetric(horizontal: 3),
+            width: i == trenutni ? 26 : 9,
+            height: 9,
+            decoration: BoxDecoration(
+              color: i == trenutni
+                  ? barva
+                  : (i < trenutni
+                      ? AppTheme.besediloTiho
+                      : AppTheme.povrsinaSvetla),
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 /// Karta, ki jo z drsom navzgor "dvigneš", da pokukaš pod pokrov.
 /// Ob spustu se pokrov vrne in vsebino skrije.
 class _PokukKarta extends StatelessWidget {
   const _PokukKarta({
     required this.pokuk,
+    required this.barva,
+    required this.index,
     required this.igralec,
     required this.beseda,
     required this.kategorijaIme,
@@ -163,6 +249,8 @@ class _PokukKarta extends StatelessWidget {
   });
 
   final double pokuk;
+  final Color barva;
+  final int index;
   final Igralec igralec;
   final String beseda;
   final String kategorijaIme;
@@ -182,7 +270,6 @@ class _PokukKarta extends StatelessWidget {
           width: double.infinity,
           child: Stack(
             children: [
-              // Vsebina (vloga / beseda) — vedno spodaj, a skrita pod pokrovom.
               Positioned.fill(
                 child: _Vsebina(
                   igralec: igralec,
@@ -191,13 +278,16 @@ class _PokukKarta extends StatelessWidget {
                   impostorViDiNamig: impostorViDiNamig,
                 ),
               ),
-              // Pokrov, ki se z drsom dviguje navzgor.
               Positioned(
                 left: 0,
                 right: 0,
                 top: -pokuk * _kartaVisina,
                 height: _kartaVisina,
-                child: _Pokrov(ime: igralec.prikazniIme),
+                child: _Pokrov(
+                  ime: igralec.prikazniIme,
+                  stevilka: igralec.stevilka,
+                  barva: barva,
+                ),
               ),
             ],
           ),
@@ -208,32 +298,66 @@ class _PokukKarta extends StatelessWidget {
 }
 
 class _Pokrov extends StatelessWidget {
-  const _Pokrov({required this.ime});
+  const _Pokrov({
+    required this.ime,
+    required this.stevilka,
+    required this.barva,
+  });
 
   final String ime;
+  final int stevilka;
+  final Color barva;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [AppTheme.povrsinaSvetla, AppTheme.povrsina],
+          colors: [
+            Color.lerp(AppTheme.povrsina, barva, 0.30)!,
+            AppTheme.povrsina,
+          ],
         ),
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppTheme.akcent, width: 2.5),
+        border: Border.all(color: barva, width: 3),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.keyboard_double_arrow_up,
-              size: 40, color: AppTheme.akcent),
-          const SizedBox(height: 8),
-          const Text('🤫', style: TextStyle(fontSize: 64)),
-          const SizedBox(height: 12),
+              size: 40, color: Colors.white),
+          const SizedBox(height: 10),
+          // Velik barvni krog s številko igralca.
+          Container(
+            width: 92,
+            height: 92,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: barva,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: barva.withValues(alpha: 0.5),
+                  blurRadius: 24,
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: Text(
+              '$stevilka',
+              style: const TextStyle(
+                fontSize: 44,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
           Text(
             ime,
+            textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w800,

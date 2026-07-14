@@ -16,6 +16,24 @@ class AppTheme {
   static const Color besedilo = Color(0xFFF5F3FF);
   static const Color besediloTiho = Color(0xFFB4AECB);
 
+  /// Živahne, med seboj dobro ločljive barve — vsak igralec dobi svojo,
+  /// da je ob prehodu na naslednjega jasno vidno, da se je zaslon spremenil.
+  static const List<Color> igralecBarve = [
+    Color(0xFF7C4DFF), // vijolična
+    Color(0xFFFF4D8D), // roza
+    Color(0xFF00E5A0), // zelena
+    Color(0xFFFFC24B), // rumena
+    Color(0xFF4DA3FF), // modra
+    Color(0xFFFF8A3D), // oranžna
+    Color(0xFF00D0E0), // cian
+    Color(0xFFB388FF), // svetlo vijolična
+    Color(0xFF9CCC65), // limeta
+    Color(0xFFF06292), // magenta
+  ];
+
+  static Color barvaIgralca(int index) =>
+      igralecBarve[index % igralecBarve.length];
+
   static ThemeData temna() {
     final osnova = ThemeData.dark(useMaterial3: true);
     return osnova.copyWith(
