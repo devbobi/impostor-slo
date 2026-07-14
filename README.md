@@ -1,4 +1,4 @@
-# 🕵️ Impostor SLO
+# 🥸 Vsiljivec
 
 Družabna party igra tipa *social deduction* (v slogu Spyfall) — **v slovenščini**, za en telefon in skupino prijateljev (»pass & play«).
 

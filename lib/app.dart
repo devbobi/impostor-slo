@@ -16,7 +16,7 @@ class ImpostorApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Impostor SLO',
+      title: 'Vsiljivec',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.temna(),
       home: const KorenZaslon(),

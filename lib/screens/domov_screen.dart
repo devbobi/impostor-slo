@@ -21,13 +21,13 @@ class DomovScreen extends StatelessWidget {
               children: [
                 const Spacer(),
                 const Text(
-                  '🕵️',
+                  '🥸',
                   style: TextStyle(fontSize: 84),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'IMPOSTOR',
+                  'VSILJIVEC',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.displaySmall?.copyWith(
                         fontWeight: FontWeight.w900,
