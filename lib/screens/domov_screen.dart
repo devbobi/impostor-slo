@@ -4,6 +4,7 @@ import '../app.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ozadje.dart';
 import 'bomba_koren.dart';
+import 'celo_screens.dart';
 import 'najverjetneje_screens.dart';
 import 'navodila_screen.dart';
 import 'taboo_screens.dart';
@@ -96,6 +97,17 @@ class DomovScreen extends StatelessWidget {
                   barva: const Color(0xFF00D0E0),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(builder: (_) => const TabooKoren()),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                _IgraKartica(
+                  emoji: '🙈',
+                  naslov: 'Beseda na čelu',
+                  opis: 'Telefon na čelo — drugi opisujejo, ti ugibaš. '
+                      'Nagni dol = pravilno.',
+                  barva: const Color(0xFF9CCC65),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (_) => const CeloKoren()),
                   ),
                 ),
                 const SizedBox(height: 20),
