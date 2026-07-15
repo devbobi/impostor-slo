@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../app.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ozadje.dart';
+import 'bomba_koren.dart';
 import 'navodila_screen.dart';
 
 class DomovScreen extends StatelessWidget {
@@ -14,42 +15,65 @@ class DomovScreen extends StatelessWidget {
       body: Ozadje(
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 28),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Spacer(),
+                const SizedBox(height: 24),
                 const Text(
                   '🥸',
-                  style: TextStyle(fontSize: 84),
+                  style: TextStyle(fontSize: 64),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Text(
                   'VSILJIVEC',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w900,
                         letterSpacing: 4,
                         color: AppTheme.besedilo,
                       ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
-                  'Kdo blefira?',
+                  'Družabne igre za en telefon',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppTheme.akcent2,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
-                const Spacer(),
-                ElevatedButton(
-                  onPressed: () => odpriNastavitve(context),
-                  child: const Text('NOVA IGRA'),
+                const SizedBox(height: 28),
+                const Text(
+                  'Izberi igro',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.besediloTiho,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _IgraKartica(
+                  emoji: '🕵️',
+                  naslov: 'Vsiljivec',
+                  opis: 'Vsi poznajo skrivno besedo — razen enega. '
+                      'Kdo blefira?',
+                  barva: AppTheme.akcent,
+                  onTap: () => odpriNastavitve(context),
                 ),
                 const SizedBox(height: 14),
+                _IgraKartica(
+                  emoji: '💣',
+                  naslov: 'Bomba',
+                  opis: 'Naštevaj besede na temo in podaj naprej. '
+                      'Kdor drži bombo, ko poči, izgubi.',
+                  barva: AppTheme.opozorilo,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (_) => const BombaKoren()),
+                  ),
+                ),
+                const Spacer(),
                 OutlinedButton(
                   onPressed: () {
                     Navigator.of(context).push(
@@ -59,21 +83,93 @@ class DomovScreen extends StatelessWidget {
                     );
                   },
                   style: OutlinedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(56),
+                    minimumSize: const Size.fromHeight(52),
                     foregroundColor: AppTheme.besedilo,
                     side: const BorderSide(color: AppTheme.povrsinaSvetla),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                   child: const Text(
-                    'KAKO SE IGRA',
+                    'PRAVILA — VSILJIVEC',
                     style: TextStyle(fontWeight: FontWeight.w700),
                   ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 24),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Kartica ene igre na domačem zaslonu.
+class _IgraKartica extends StatelessWidget {
+  const _IgraKartica({
+    required this.emoji,
+    required this.naslov,
+    required this.opis,
+    required this.barva,
+    required this.onTap,
+  });
+
+  final String emoji;
+  final String naslov;
+  final String opis;
+  final Color barva;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.lerp(AppTheme.povrsina, barva, 0.28)!,
+                AppTheme.povrsina,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: barva, width: 2),
+          ),
+          child: Row(
+            children: [
+              Text(emoji, style: const TextStyle(fontSize: 42)),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      naslov,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        color: barva,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      opis,
+                      style: const TextStyle(
+                        color: AppTheme.besediloTiho,
+                        fontSize: 13,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: AppTheme.besediloTiho),
+            ],
           ),
         ),
       ),

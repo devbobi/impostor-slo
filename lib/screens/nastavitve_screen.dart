@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/besede_repository.dart';
@@ -6,6 +6,7 @@ import '../models/kategorija.dart';
 import '../models/nastavitve_igre.dart';
 import '../state/igra_controller.dart';
 import '../theme/app_theme.dart';
+import '../widgets/imena_urejevalnik.dart';
 import '../widgets/ozadje.dart';
 
 class NastavitveScreen extends ConsumerWidget {
@@ -64,7 +65,7 @@ class _Vsebina extends ConsumerWidget {
             padding: const EdgeInsets.all(20),
             children: [
               _Stepper(
-                naslov: 'Število igralcev',
+                naslov: 'Ĺ tevilo igralcev',
                 vrednost: nastavitve.steviloIgralcev,
                 najmanj: 3,
                 najvec: 10,
@@ -79,7 +80,7 @@ class _Vsebina extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               _Stepper(
-                naslov: 'Število impostorjev',
+                naslov: 'Ĺ tevilo impostorjev',
                 vrednost: nastavitve.steviloImpostorjev,
                 najmanj: 1,
                 najvec: najvecImp,
@@ -100,11 +101,11 @@ class _Vsebina extends ConsumerWidget {
               ),
               const SizedBox(height: 4),
               const Text(
-                'Neobvezno — prazno polje pomeni »Igralec N«.',
+                'Neobvezno â€” prazno polje pomeni Â»Igralec NÂ«.',
                 style: TextStyle(color: AppTheme.besediloTiho, fontSize: 13),
               ),
               const SizedBox(height: 12),
-              _ImenaUrejevalnik(
+              ImenaUrejevalnik(
                 steviloIgralcev: nastavitve.steviloIgralcev,
                 imena: nastavitve.imena,
                 onSpremeni: (list) => controller.posodobiNastavitve(
@@ -126,7 +127,7 @@ class _Vsebina extends ConsumerWidget {
                 runSpacing: 10,
                 children: [
                   _KategorijaCip(
-                    ime: '🎲 Naključno',
+                    ime: 'đźŽ˛ NakljuÄŤno',
                     izbran: nastavitve.kategorijaId == null,
                     onTap: () => controller.posodobiNastavitve(
                       nastavitve.kopija(pocistiKategorijo: true),
@@ -147,7 +148,7 @@ class _Vsebina extends ConsumerWidget {
                 child: SwitchListTile(
                   value: nastavitve.uporabiTimer,
                   activeThumbColor: AppTheme.akcent,
-                  title: const Text('Časovnik za namigovanje'),
+                  title: const Text('ÄŚasovnik za namigovanje'),
                   subtitle: Text(
                     nastavitve.uporabiTimer
                         ? '${nastavitve.casNamigovanjaSekunde ~/ 60} min ${nastavitve.casNamigovanjaSekunde % 60} s'
@@ -175,7 +176,7 @@ class _Vsebina extends ConsumerWidget {
                   activeThumbColor: AppTheme.akcent,
                   title: const Text('Impostor vidi kategorijo'),
                   subtitle: const Text(
-                    'Lažje blefira (priporočeno za začetnike)',
+                    'LaĹľje blefira (priporoÄŤeno za zaÄŤetnike)',
                     style: TextStyle(color: AppTheme.besediloTiho),
                   ),
                   onChanged: (v) => controller.posodobiNastavitve(
@@ -193,7 +194,7 @@ class _Vsebina extends ConsumerWidget {
               controller.zacniIgro(kategorije);
               Navigator.of(context).popUntil((r) => r.isFirst);
             },
-            child: const Text('ZAČNI'),
+            child: const Text('ZAÄŚNI'),
           ),
         ),
       ],
@@ -330,132 +331,6 @@ class _KategorijaCip extends StatelessWidget {
   }
 }
 
-/// Urejevalnik neobveznih imen igralcev. Sam upravlja polja glede na
-/// število igralcev in ob vsaki spremembi sporoči celoten seznam navzgor.
-class _ImenaUrejevalnik extends StatefulWidget {
-  const _ImenaUrejevalnik({
-    required this.steviloIgralcev,
-    required this.imena,
-    required this.onSpremeni,
-  });
-
-  final int steviloIgralcev;
-  final List<String> imena;
-  final ValueChanged<List<String>> onSpremeni;
-
-  @override
-  State<_ImenaUrejevalnik> createState() => _ImenaUrejevalnikState();
-}
-
-class _ImenaUrejevalnikState extends State<_ImenaUrejevalnik> {
-  late List<TextEditingController> _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = List.generate(
-      widget.steviloIgralcev,
-      (i) => TextEditingController(
-        text: i < widget.imena.length ? widget.imena[i] : '',
-      ),
-    );
-  }
-
-  @override
-  void didUpdateWidget(_ImenaUrejevalnik oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.steviloIgralcev != _ctrl.length) {
-      _uskladiKolicino(widget.steviloIgralcev);
-    }
-  }
-
-  void _uskladiKolicino(int novo) {
-    if (novo > _ctrl.length) {
-      for (var i = _ctrl.length; i < novo; i++) {
-        _ctrl.add(TextEditingController(
-          text: i < widget.imena.length ? widget.imena[i] : '',
-        ));
-      }
-    } else if (novo < _ctrl.length) {
-      for (var i = _ctrl.length - 1; i >= novo; i--) {
-        _ctrl[i].dispose();
-        _ctrl.removeAt(i);
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    for (final c in _ctrl) {
-      c.dispose();
-    }
-    super.dispose();
-  }
-
-  void _javiSpremembo() {
-    widget.onSpremeni(_ctrl.map((c) => c.text).toList());
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        for (var i = 0; i < _ctrl.length; i++)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: Row(
-              children: [
-                Container(
-                  width: 34,
-                  height: 34,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    color: AppTheme.povrsinaSvetla,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '${i + 1}',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w800,
-                      color: AppTheme.besediloTiho,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    controller: _ctrl[i],
-                    textCapitalization: TextCapitalization.words,
-                    style: const TextStyle(color: AppTheme.besedilo),
-                    onChanged: (_) => _javiSpremembo(),
-                    decoration: InputDecoration(
-                      isDense: true,
-                      hintText: 'Igralec ${i + 1}',
-                      hintStyle: const TextStyle(color: AppTheme.besediloTiho),
-                      filled: true,
-                      fillColor: AppTheme.povrsina,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 12,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: BorderSide.none,
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
-                        borderSide: const BorderSide(color: AppTheme.akcent),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-      ],
-    );
-  }
-}
 
 class _CasDrsnik extends StatelessWidget {
   const _CasDrsnik({required this.sekunde, required this.onSpremeni});
