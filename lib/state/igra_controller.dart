@@ -27,6 +27,7 @@ class IgraStanje {
     this.skrivnaBeseda,
     this.igralci = const [],
     this.trenutniRazkritIndex = 0,
+    this.zacetnikIndex = 0,
     this.izlocenIgralec,
     this.izid = Izid.nedolocen,
   });
@@ -40,11 +41,18 @@ class IgraStanje {
   /// Kateri igralec je na vrsti med [FazaIgre.razkritje].
   final int trenutniRazkritIndex;
 
+  /// Naključno izbran igralec, ki pove prvo asociacijo.
+  final int zacetnikIndex;
+
   /// Igralec, ki je bil izglasovan v [FazaIgre.glasovanje].
   final Igralec? izlocenIgralec;
   final Izid izid;
 
   bool get vsiRazkriti => trenutniRazkritIndex >= igralci.length;
+
+  /// Igralec, ki začne krog namigovanja (`null`, če igra še ni sestavljena).
+  Igralec? get zacetnik =>
+      zacetnikIndex < igralci.length ? igralci[zacetnikIndex] : null;
 
   IgraStanje kopija({
     FazaIgre? faza,
@@ -53,6 +61,7 @@ class IgraStanje {
     String? skrivnaBeseda,
     List<Igralec>? igralci,
     int? trenutniRazkritIndex,
+    int? zacetnikIndex,
     Igralec? izlocenIgralec,
     bool pocistiIzlocenega = false,
     Izid? izid,
@@ -64,6 +73,7 @@ class IgraStanje {
       skrivnaBeseda: skrivnaBeseda ?? this.skrivnaBeseda,
       igralci: igralci ?? this.igralci,
       trenutniRazkritIndex: trenutniRazkritIndex ?? this.trenutniRazkritIndex,
+      zacetnikIndex: zacetnikIndex ?? this.zacetnikIndex,
       izlocenIgralec:
           pocistiIzlocenega ? null : (izlocenIgralec ?? this.izlocenIgralec),
       izid: izid ?? this.izid,
@@ -106,12 +116,16 @@ class IgraController extends StateNotifier<IgraStanje> {
       random: _random,
     );
 
+    // Naključni igralec, ki pove prvo asociacijo.
+    final zacetnik = _random.nextInt(igralci.length);
+
     state = state.kopija(
       faza: FazaIgre.razkritje,
       kategorija: kategorija,
       skrivnaBeseda: beseda,
       igralci: igralci,
       trenutniRazkritIndex: 0,
+      zacetnikIndex: zacetnik,
       pocistiIzlocenega: true,
       izid: Izid.nedolocen,
     );

@@ -94,6 +94,12 @@ class _NamigovanjeScreenState extends ConsumerState<NamigovanjeScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(color: AppTheme.besediloTiho, height: 1.4),
                 ),
+                const SizedBox(height: 20),
+                if (stanje.zacetnik != null)
+                  _ZacetnikKartica(
+                    ime: stanje.zacetnik!.prikazniIme,
+                    barva: AppTheme.barvaIgralca(stanje.zacetnikIndex),
+                  ),
                 const Spacer(),
                 if (uporabiTimer) ...[
                   Text(
@@ -131,6 +137,68 @@ class _NamigovanjeScreenState extends ConsumerState<NamigovanjeScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Poudarjena kartica z naključno izbranim igralcem, ki pove prvo asociacijo.
+class _ZacetnikKartica extends StatelessWidget {
+  const _ZacetnikKartica({required this.ime, required this.barva});
+
+  final String ime;
+  final Color barva;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Color.lerp(AppTheme.povrsina, barva, 0.35)!,
+            AppTheme.povrsina,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: barva, width: 2.5),
+        boxShadow: [
+          BoxShadow(
+            color: barva.withValues(alpha: 0.30),
+            blurRadius: 24,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          const Text(
+            '🎤 ZAČNE',
+            style: TextStyle(
+              color: AppTheme.besediloTiho,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 2,
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            ime,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.w900,
+              color: barva,
+            ),
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'pove prvo asociacijo, nato gre po vrsti naprej',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppTheme.besediloTiho, fontSize: 13),
+          ),
+        ],
       ),
     );
   }
