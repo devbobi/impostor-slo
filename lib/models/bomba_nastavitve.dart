@@ -1,3 +1,5 @@
+import 'imena_util.dart';
+
 /// Prednastavljeni razponi trajanja bombe. Točen čas je naključen znotraj
 /// razpona, tako da nikoli ni enako dolgo — in nihče ne ve, kdaj poči.
 enum BombaDolzina {
@@ -32,13 +34,7 @@ class BombaNastavitve {
   final List<String> imena;
 
   /// Ime igralca z indeksom [i] ali privzeto "Igralec N".
-  String imeZa(int i) {
-    if (i < imena.length) {
-      final t = imena[i].trim();
-      if (t.isNotEmpty) return t;
-    }
-    return 'Igralec ${i + 1}';
-  }
+  String imeZa(int i) => imeIgralca(imena, i);
 
   BombaNastavitve kopija({
     int? steviloIgralcev,

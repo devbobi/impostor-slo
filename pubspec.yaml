@@ -25,6 +25,8 @@ flutter:
   assets:
     - assets/data/besede.json
     - assets/data/teme.json
+    - assets/data/trditve.json
+    - assets/data/taboo.json
 
 flutter_launcher_icons:
   android: true

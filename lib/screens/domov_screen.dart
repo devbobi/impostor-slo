@@ -4,7 +4,9 @@ import '../app.dart';
 import '../theme/app_theme.dart';
 import '../widgets/ozadje.dart';
 import 'bomba_koren.dart';
+import 'najverjetneje_screens.dart';
 import 'navodila_screen.dart';
+import 'taboo_screens.dart';
 
 class DomovScreen extends StatelessWidget {
   const DomovScreen({super.key});
@@ -16,8 +18,7 @@ class DomovScreen extends StatelessWidget {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            child: ListView(
               children: [
                 const SizedBox(height: 24),
                 const Text(
@@ -73,7 +74,31 @@ class DomovScreen extends StatelessWidget {
                     MaterialPageRoute<void>(builder: (_) => const BombaKoren()),
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(height: 14),
+                _IgraKartica(
+                  emoji: '🤔',
+                  naslov: 'Kdo je najbolj verjetno?',
+                  opis: 'Trditev, vsi pokažejo na enega. '
+                      'Kdor dobi največ prstov, dobi točko.',
+                  barva: const Color(0xFF4DA3FF),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const NajverjetnejeKoren(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                _IgraKartica(
+                  emoji: '🚫',
+                  naslov: 'Prepovedane besede',
+                  opis: 'Opisuj besedo, a brez prepovedanih. '
+                      'Ostali ugibajo, čas teče.',
+                  barva: const Color(0xFF00D0E0),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (_) => const TabooKoren()),
+                  ),
+                ),
+                const SizedBox(height: 20),
                 OutlinedButton(
                   onPressed: () {
                     Navigator.of(context).push(
